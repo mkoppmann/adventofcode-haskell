@@ -1,6 +1,4 @@
-import           Data.List                      ( break
-                                                , unfoldr
-                                                )
+import           Data.List                      ( break )
 import           Data.Maybe                     ( mapMaybe )
 import qualified Data.Map                      as M
 
@@ -48,21 +46,13 @@ part2 (w1, w2) =
   minimum . M.elems $ M.intersectionWith (+) (toMap w1) (toMap w2)
 
 toMap :: Wire -> M.Map Point Steps
-toMap dirs = M.fromList $ unfoldr step (dirs, (0, 0), 0)
+toMap = M.fromList . flip zip [1 ..] . scanl1 addPoints . concatMap getPoint
  where
-  step ([]        , _, _) = Nothing
-  step (U 0 : rest, p, s) = step (rest, p, s)
-  step (R 0 : rest, p, s) = step (rest, p, s)
-  step (D 0 : rest, p, s) = step (rest, p, s)
-  step (L 0 : rest, p, s) = step (rest, p, s)
-  step (U n : rest, (x, y), s) =
-    Just (((x, y + 1), s + 1), (U (n - 1) : rest, (x, y + 1), s + 1))
-  step (R n : rest, (x, y), s) =
-    Just (((x + 1, y), s + 1), (R (n - 1) : rest, (x + 1, y), s + 1))
-  step (D n : rest, (x, y), s) =
-    Just (((x, y - 1), s + 1), (D (n - 1) : rest, (x, y - 1), s + 1))
-  step (L n : rest, (x, y), s) =
-    Just (((x - 1, y), s + 1), (L (n - 1) : rest, (x - 1, y), s + 1))
+  addPoints (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
+  getPoint (U n) = replicate n (0, 1)
+  getPoint (R n) = replicate n (1, 0)
+  getPoint (D n) = replicate n (0, -1)
+  getPoint (L n) = replicate n (-1, 0)
 
 prepare :: String -> Input
 prepare = tuplify . map (mapMaybe parse . split ',') . lines
