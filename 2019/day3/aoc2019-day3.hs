@@ -56,7 +56,10 @@ toMap = M.fromList . flip zip [1 ..] . scanl1 addPoints . concatMap getPoint
 
 prepare :: String -> Input
 prepare = tuplify . map (mapMaybe parse . split ',') . lines
-  where tuplify [w1, w2] = (w1, w2)
+
+tuplify :: [a] -> (a, a)
+tuplify [w1, w2] = (w1, w2)
+tuplify _        = error "This program can only handle two wires"
 
 parse :: String -> Maybe (Direction Int)
 parse ('U' : x) = Just $ U $ read x
@@ -67,8 +70,8 @@ parse _         = Nothing
 
 split :: Char -> String -> [String]
 split chr str = case break (== chr) str of
-  (a, chr : b) -> a : split chr b
-  (a, ""     ) -> [a]
+  (a, chr' : b) -> a : split chr' b
+  (a, ""      ) -> [a]
 
 main :: IO ()
 main = interact $ show . ((,) <$> part1 <*> part2) . prepare

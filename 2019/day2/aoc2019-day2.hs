@@ -51,7 +51,7 @@ interpret address program = IM.lookup address program >>= \case
   99 -> pure Halt
   _  -> Nothing
  where
-  at address = IM.lookup address program
+  at pos = IM.lookup pos program
   binOp inst =
     inst <$> at (address + 1) <*> at (address + 2) <*> at (address + 3)
 
@@ -69,8 +69,8 @@ prepare = IM.fromList . zip [0 ..] . map read . split ','
 
 split :: Char -> String -> [String]
 split chr str = case break (== chr) str of
-  (a, chr : b) -> a : split chr b
-  (a, ""     ) -> [a]
+  (a, chr' : b) -> a : split chr' b
+  (a, ""      ) -> [a]
 
 main :: IO ()
 main = interact $ show . ((,) <$> part1 <*> part2) . prepare

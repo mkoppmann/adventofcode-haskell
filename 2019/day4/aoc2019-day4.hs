@@ -54,15 +54,20 @@ onlyIncreasing (x : y : rest) = (x <= y) && onlyIncreasing (y : rest)
 onlyIncreasing _              = True
 
 pwRange :: Range -> [Int]
-pwRange (min, max) = [min .. max]
+pwRange (minVal, maxVal) = [minVal .. maxVal]
 
 prepare :: String -> Range
-prepare = tuplify . map read . split '-' where tuplify [x, y] = (x, y)
+prepare = tuplify . map read . split '-'
+
+tuplify :: [a] -> (a, a)
+tuplify [x, y] = (x, y)
+tuplify _ =
+  error "This program can only handle a range with one min and max value"
 
 split :: Char -> String -> [String]
 split chr str = case break (== chr) str of
-  (a, chr : b) -> a : split chr b
-  (a, ""     ) -> [a]
+  (a, chr' : b) -> a : split chr' b
+  (a, ""      ) -> [a]
 
 main :: IO ()
 main = interact $ show . ((,) <$> part1 <*> part2) . prepare
