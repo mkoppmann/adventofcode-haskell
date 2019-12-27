@@ -40,8 +40,7 @@ isValidPassword :: [String -> Bool] -> String -> Bool
 isValidPassword conditions p = all ($ p) conditions
 
 sixDigits :: String -> Bool
-sixDigits n | length n == 6 = True
-            | otherwise     = False
+sixDigits = (== 6) . length
 
 hasAdjacentChars :: String -> Bool
 hasAdjacentChars (x : y : rest) = (x == y) || hasAdjacentChars (y : rest)
